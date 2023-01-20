@@ -32,4 +32,8 @@ public class RoleService {
     public void addRole(Role role) {
         roleRepository.addRole(role);
     }
+
+    public List<Role> getRoleListById(List<Long> rolesId) {
+        return roleRepository.getRoleListById(rolesId);
+    }
 }

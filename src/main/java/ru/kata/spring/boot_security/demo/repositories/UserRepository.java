@@ -23,5 +23,5 @@ public interface UserRepository {
 
     User getUserById(Long id);
 
-
+    User findUserByEmail(String email);
 }

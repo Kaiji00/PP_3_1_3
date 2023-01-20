@@ -1,6 +1,9 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,8 +13,8 @@ import ru.kata.spring.boot_security.demo.services.RoleService;
 import ru.kata.spring.boot_security.demo.services.UserService;
 import org.springframework.ui.Model;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -30,7 +33,11 @@ public class AdminsController {
 
     @GetMapping
     public String printUsers(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userService.findUserByName(auth.getName());
+        model.addAttribute("user", user);
         model.addAttribute("users", userService.getAllUsers());
+        model.addAttribute("roles", roleService.getAllRoles());
         return "admin";
     }
 
@@ -42,27 +49,27 @@ public class AdminsController {
 
     @GetMapping("/new")
     public String newUser(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user1 = userService.findUserByName(auth.getName());
+        model.addAttribute("user1", user1);
         model.addAttribute("user", new User());
         model.addAttribute("roles", roleService.getAllRoles());
         return "new";
     }
 
     @PostMapping()
-    public String createUser(@ModelAttribute("user") User user) {
+    public String createUser(@ModelAttribute("user") User user,
+                             @RequestParam("listRoles") ArrayList<Long> roles){
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(roleService.getRoleListById(roles));
         userService.saveUser(user);
         return "redirect:/admin";
     }
 
-    @GetMapping("/{id}/edit")
-    public String editUser(Model model, @PathVariable("id") Long id) {
-        model.addAttribute("roles", roleService.getAllRoles());
-        model.addAttribute("user", userService.getUserById(id));
-        return "edit";
-    }
-
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("user") User user, @PathVariable("id") Long id) {
+    public String update(@ModelAttribute("user") User user, @PathVariable("id") Long id,
+                         @RequestParam("listRoles1") List<Long> listRoles) {
+        user.setRoles(roleService.getRoleListById(listRoles));
         userService.updateUser(user);
         return "redirect:/admin";
     }

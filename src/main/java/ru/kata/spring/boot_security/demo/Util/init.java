@@ -30,11 +30,16 @@ public class init {
         Role roleUser = new Role("ROLE_USER");
         roleService.addRole(roleAdmin);
         roleService.addRole(roleUser);
-        List<Role> roleSet = new ArrayList<>();
-        roleSet.add(roleAdmin);
-        roleSet.add(roleUser);
-        User admin = new User("admin2", "admin@gmail.com",
-                "$2a$12$29mL7hCrkQ01SgK.yEQ5ceeNLp0gUwamoNCX90Dm6pNLt/zQXuxbq", roleSet);
+        List<Role> roleSetAdmin = new ArrayList<>();
+        List<Role> roleSetUser = new ArrayList<>();
+        roleSetAdmin.add(roleAdmin);
+        roleSetAdmin.add(roleUser);
+        roleSetUser.add(roleUser);
+        User admin = new User("admin2", "admin", 22, "admin@gmail.com",
+                "$2a$12$29mL7hCrkQ01SgK.yEQ5ceeNLp0gUwamoNCX90Dm6pNLt/zQXuxbq", roleSetAdmin);
+        User user = new User("Stas", "Gorbachev", 22, "stgorbissi@gmail.com",
+                "$2a$12$29mL7hCrkQ01SgK.yEQ5ceeNLp0gUwamoNCX90Dm6pNLt/zQXuxbq", roleSetUser );
         userService.saveUser(admin);
+        userService.saveUser(user);
     }
 }
